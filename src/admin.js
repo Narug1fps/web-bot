@@ -12,7 +12,7 @@ const pergunta = (texto) => new Promise((resolve) => rl.question(texto, resolve)
 
 async function menu() {
     console.log('\n🥗 ═══════════════════════════════════════');
-    console.log('   ADMINISTRAÇÃO DO BOT NUTRICIONISTA');
+    console.log('   ADMINISTRAÇÃO DO BOT VIRAWEB');
     console.log('   ═══════════════════════════════════════\n');
     console.log('   1. Listar perguntas cadastradas');
     console.log('   2. Adicionar nova pergunta');
