@@ -2,6 +2,8 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcodeTerminal = require('qrcode-terminal');
 const QRCode = require('qrcode');
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const { tokenizar, encontrarMelhorMatch } = require('./tokenizer');
 const db = require('./database');
 require('dotenv').config();
@@ -31,69 +33,89 @@ const client = new Client({
 const contatosNovos = new Set();
 let botReady = false;
 let currentQR = null;
+let currentQRImage = null;
+
+const MIME_TYPES = {
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.svg': 'image/svg+xml',
+    '.ico': 'image/x-icon'
+};
+
+const serveStaticFile = (res, filePath) => {
+    const ext = path.extname(filePath);
+    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Not Found');
+            return;
+        }
+        res.writeHead(200, { 'Content-Type': contentType });
+        res.end(data);
+    });
+};
 
 const server = http.createServer(async (req, res) => {
-    if (req.url === '/health') {
+    const url = new URL(req.url, `http://localhost`);
+    const pathname = url.pathname;
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
+    }
+
+    if (pathname === '/health') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
             status: 'ok',
             botReady,
             timestamp: new Date().toISOString()
         }));
-    } else if (req.url === '/qr') {
-        if (botReady) {
-            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end(`
-                <html>
-                <head><title>Viraweb Bot</title></head>
-                <body style="font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: #1a1a2e; color: #fff;">
-                    <div style="text-align: center;">
-                        <h1>✅ Bot já está conectado!</h1>
-                        <p>O WhatsApp já foi autenticado.</p>
-                    </div>
-                </body>
-                </html>
-            `);
-        } else if (currentQR) {
-            try {
-                const qrImage = await QRCode.toDataURL(currentQR, { width: 300 });
-                res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end(`
-                    <html>
-                    <head>
-                        <title>Conectar WhatsApp - Viraweb</title>
-                        <meta http-equiv="refresh" content="30">
-                    </head>
-                    <body style="font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: #1a1a2e; color: #fff;">
-                        <div style="text-align: center; background: #16213e; padding: 40px; border-radius: 20px;">
-                            <h1>📱 Escaneie o QR Code</h1>
-                            <p>WhatsApp > Menu > Dispositivos conectados > Conectar dispositivo</p>
-                            <img src="${qrImage}" style="margin: 20px 0; border-radius: 10px;" />
-                            <p style="color: #888;">Esta página atualiza automaticamente a cada 30s</p>
-                        </div>
-                    </body>
-                    </html>
-                `);
-            } catch (err) {
-                res.writeHead(500);
-                res.end('Erro ao gerar QR Code');
+    } else if (pathname === '/api/status') {
+        try {
+            let stats = null;
+            if (botReady) {
+                stats = await db.buscarEstatisticas();
             }
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                botReady,
+                qrCode: currentQRImage,
+                stats,
+                timestamp: new Date().toISOString()
+            }));
+        } catch (error) {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                botReady,
+                qrCode: currentQRImage,
+                stats: null,
+                timestamp: new Date().toISOString()
+            }));
+        }
+    } else if (pathname === '/' || pathname === '/index.html') {
+        const filePath = path.join(__dirname, '..', 'public', 'index.html');
+        serveStaticFile(res, filePath);
+    } else if (pathname.startsWith('/')) {
+        const filePath = path.join(__dirname, '..', 'public', pathname);
+
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            serveStaticFile(res, filePath);
         } else {
-            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-            res.end(`
-                <html>
-                <head>
-                    <title>Aguardando - Viraweb</title>
-                    <meta http-equiv="refresh" content="5">
-                </head>
-                <body style="font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: #1a1a2e; color: #fff;">
-                    <div style="text-align: center;">
-                        <h1>⏳ Aguardando QR Code...</h1>
-                        <p>O bot está iniciando. Esta página atualiza automaticamente.</p>
-                    </div>
-                </body>
-                </html>
-            `);
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Not Found');
         }
     } else {
         res.writeHead(404);
@@ -103,16 +125,21 @@ const server = http.createServer(async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`🌐 Health check rodando na porta ${PORT}`);
-    console.log(`📱 Acesse /qr para ver o QR Code: http://localhost:${PORT}/qr`);
+    console.log(`🌐 Servidor rodando na porta ${PORT}`);
+    console.log(`📱 Acesse http://localhost:${PORT} para conectar o WhatsApp`);
 });
 
-client.on('qr', (qr) => {
+client.on('qr', async (qr) => {
     currentQR = qr;
+    try {
+        currentQRImage = await QRCode.toDataURL(qr, { width: 300 });
+    } catch (err) {
+        console.error('Erro ao gerar QR Image:', err);
+    }
     console.log('\n📱 ESCANEIE O QR CODE ABAIXO COM SEU WHATSAPP:');
     console.log('   (WhatsApp > Menu > Dispositivos conectados > Conectar dispositivo)\n');
     qrcodeTerminal.generate(qr, { small: true });
-    console.log('\n🌐 OU ACESSE: /qr no navegador para ver o QR Code');
+    console.log(`\n🌐 OU ACESSE: http://localhost:${PORT} para ver o QR Code`);
     console.log('⚠️  IMPORTANTE: Após escanear, a sessão será salva.');
     console.log('   Nas próximas vezes não precisará escanear novamente.\n');
 });

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectar WhatsApp - Viraweb Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="currentColor"/>
+                        <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    </svg>
+                </div>
+                <span class="logo-text">Viraweb Bot</span>
+            </div>
+            <div class="status-badge" id="statusBadge">
+                <span class="status-dot"></span>
+                <span class="status-text">Verificando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Estado: Carregando -->
+            <div class="state-container" id="stateLoading">
+                <div class="loading-card">
+                    <div class="spinner"></div>
+                    <h2>Iniciando Bot</h2>
+                    <p>Aguarde enquanto preparamos tudo para você...</p>
+                </div>
+            </div>
+
+            <!-- Estado: QR Code -->
+            <div class="state-container hidden" id="stateQR">
+                <div class="qr-card">
+                    <div class="qr-header">
+                        <div class="qr-icon">📱</div>
+                        <h1>Escaneie o QR Code</h1>
+                        <p>Conecte seu WhatsApp para começar</p>
+                    </div>
+
+                    <div class="qr-wrapper">
+                        <div class="qr-frame">
+                            <img id="qrImage" src="" alt="QR Code para conectar WhatsApp">
+                            <div class="qr-corners">
+                                <span class="corner top-left"></span>
+                                <span class="corner top-right"></span>
+                                <span class="corner bottom-left"></span>
+                                <span class="corner bottom-right"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="instructions">
+                        <div class="instruction-step">
+                            <span class="step-number">1</span>
+                            <span>Abra o WhatsApp no celular</span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="step-number">2</span>
+                            <span>Toque em <strong>Menu ⋮</strong> ou <strong>Configurações</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="step-number">3</span>
+                            <span>Selecione <strong>Dispositivos conectados</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="step-number">4</span>
+                            <span>Toque em <strong>Conectar dispositivo</strong> e escaneie</span>
+                        </div>
+                    </div>
+
+                    <div class="refresh-info">
+                        <div class="refresh-icon">🔄</div>
+                        <span>Atualizando automaticamente em <strong id="countdown">10</strong>s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado: Conectado -->
+            <div class="state-container hidden" id="stateConnected">
+                <div class="connected-card">
+                    <div class="success-animation">
+                        <div class="checkmark-circle">
+                            <svg viewBox="0 0 52 52">
+                                <circle cx="26" cy="26" r="25" fill="none"/>
+                                <path d="M14.1 27.2l7.1 7.2 16.7-16.8" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h1>Bot Conectado!</h1>
+                    <p>O WhatsApp foi autenticado com sucesso. O bot já está funcionando.</p>
+                    
+                    <div class="stats-grid" id="statsGrid">
+                        <div class="stat-item">
+                            <span class="stat-value" id="statPerguntas">-</span>
+                            <span class="stat-label">Perguntas</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statMensagens">-</span>
+                            <span class="stat-label">Mensagens</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statConfianca">-</span>
+                            <span class="stat-label">Confiança Média</span>
+                        </div>
+                    </div>
+
+                    <a href="/admin" class="admin-link">
+                        <span>Painel Admin</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Estado: Erro -->
+            <div class="state-container hidden" id="stateError">
+                <div class="error-card">
+                    <div class="error-icon">⚠️</div>
+                    <h2>Erro de Conexão</h2>
+                    <p id="errorMessage">Não foi possível conectar ao servidor.</p>
+                    <button class="retry-btn" onclick="checkStatus()">
+                        <span>Tentar Novamente</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2024 Viraweb Bot • Powered by whatsapp-web.js</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
