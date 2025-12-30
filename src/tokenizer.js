@@ -78,7 +78,22 @@ function encontrarMelhorMatch(mensagem, perguntas) {
     let maiorSimilaridade = 0;
 
     for (const pergunta of perguntas) {
-        const tokensPergunta = JSON.parse(pergunta.tokens);
+        let tokensPergunta;
+
+        if (Array.isArray(pergunta.tokens)) {
+            tokensPergunta = pergunta.tokens;
+        } else if (typeof pergunta.tokens === 'string') {
+            try {
+                tokensPergunta = JSON.parse(pergunta.tokens);
+            } catch (e) {
+                console.error('Erro ao parsear tokens:', e);
+                continue;
+            }
+        } else {
+            console.error('Formato de tokens desconhecido:', typeof pergunta.tokens);
+            continue;
+        }
+
         const similaridade = calcularSimilaridade(tokensMensagem, tokensPergunta);
 
         if (similaridade > maiorSimilaridade) {
