@@ -158,6 +158,15 @@ function stopPolling() {
     }
 }
 
+// Função de Retry
+window.retry = function () {
+    setState('loading');
+    checkStatus();
+    if (!state.pollInterval) {
+        startPolling();
+    }
+};
+
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
     setState('loading');
