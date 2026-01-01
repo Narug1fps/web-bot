@@ -106,7 +106,12 @@ async function registrarHistorico(numeroTelefone, nomeContato, mensagemRecebida,
         .single();
 
     if (error) {
-        console.error('Erro ao registrar histórico:', error);
+        // 42501 = permission denied (RLS/role issue)
+        if (error.code === '42501') {
+            console.error('Erro ao registrar histórico: violação de RLS. Verifique se a variável SUPABASE_SERVICE_KEY contém a Service Role Key ou ajuste as policies no Supabase.', error);
+        } else {
+            console.error('Erro ao registrar histórico:', error);
+        }
         return null;
     }
     return data;
@@ -155,10 +160,14 @@ async function buscarConfig(chave) {
         .single();
 
     if (error) {
+        // PGRST116 = no rows to return when using .single()
+        if (error.code === 'PGRST116') {
+            return null;
+        }
         console.error('Erro ao buscar configuração:', error);
         return null;
     }
-    return data?.valor;
+    return data?.valor ?? null;
 }
 
 async function atualizarConfig(chave, valor) {

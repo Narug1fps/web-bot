@@ -196,6 +196,18 @@ client.on('message', async (message) => {
         const contact = await message.getContact();
         const nomeContato = contact.pushname || contact.name || 'Desconhecido';
 
+        // Responder saudações comuns localmente (não depende de DB)
+        const textoLower = mensagem.trim().toLowerCase();
+        const greetingRegex = /^(oi|ol[aá]|ola|bom dia|boa tarde|boa noite|e ai|e aí)\b/;
+        if (greetingRegex.test(textoLower)) {
+            const msgBoasVindas = await db.buscarConfig('mensagem_boas_vindas') || 'Olá! 👋 Como posso ajudar?';
+            await message.reply(msgBoasVindas);
+            console.log('   👋 Resposta de boas-vindas enviada');
+            // Tentar registrar histórico, falhas não devem interromper o fluxo
+            await db.registrarHistorico(numeroTelefone, nomeContato, mensagem, msgBoasVindas, 1, null);
+            return;
+        }
+
         if (!contatosNovos.has(numeroTelefone)) {
             contatosNovos.add(numeroTelefone);
             const msgBoasVindas = await db.buscarConfig('mensagem_boas_vindas');
