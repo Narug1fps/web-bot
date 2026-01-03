@@ -19,6 +19,28 @@ const stopWords = new Set([
     'oi', 'olá', 'bom', 'boa', 'dia', 'tarde', 'noite'
 ]);
 
+const sinonimos = {
+    'vc': 'voce',
+    'vcs': 'voces',
+    'tb': 'tambem',
+    'tbm': 'tambem',
+    'pq': 'porque',
+    'eh': 'e',
+    'tao': 'estao',
+    'ta': 'esta',
+    'q': 'que',
+    'pra': 'para',
+    'pro': 'para',
+    'msg': 'mensagem',
+    'zap': 'whatsapp',
+    'whats': 'whatsapp',
+    'face': 'facebook',
+    'insta': 'instagram',
+    'fone': 'telefone',
+    'tel': 'telefone',
+    'so': 'soh'
+};
+
 function normalizarTexto(texto) {
     return texto
         .toLowerCase()
@@ -34,7 +56,8 @@ function tokenizar(texto) {
     const tokens = tokenizer.tokenize(textoNormalizado);
 
     const tokensProcessados = tokens
-        .filter(token => token.length > 2)
+        .map(token => sinonimos[token] || token) // Substituir sinônimos antes de filtrar
+        .filter(token => token.length >= 2) // Aceitar palavras com 2 ou mais letras (antes era > 2)
         .filter(token => !stopWords.has(token))
         .map(token => stemmer.stem(token));
 
@@ -94,7 +117,16 @@ function encontrarMelhorMatch(mensagem, perguntas) {
             continue;
         }
 
-        const similaridade = calcularSimilaridade(tokensMensagem, tokensPergunta);
+        // IMPORTANTE: Stemizar os tokens do banco também para garantir o match
+        // Os tokens do banco podem estar em formato original (não stemizados)
+        const tokensPerguntaStemizados = tokensPergunta.map(token => {
+            const tokenNorm = normalizarTexto(token);
+            // Aplicar sinônimos também nos tokens do banco (caso tenha 'vc' cadastrado por engano)
+            const tokenSubst = sinonimos[tokenNorm] || tokenNorm;
+            return stemmer.stem(tokenSubst);
+        });
+
+        const similaridade = calcularSimilaridade(tokensMensagem, tokensPerguntaStemizados);
 
         if (similaridade > maiorSimilaridade) {
             maiorSimilaridade = similaridade;
@@ -102,7 +134,7 @@ function encontrarMelhorMatch(mensagem, perguntas) {
                 pergunta: pergunta,
                 confianca: similaridade,
                 tokensMensagem: tokensMensagem,
-                tokensPergunta: tokensPergunta
+                tokensPergunta: tokensPerguntaStemizados
             };
         }
     }
