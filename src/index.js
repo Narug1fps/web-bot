@@ -80,12 +80,13 @@ const server = http.createServer(async (req, res) => {
         res.end(JSON.stringify({
             status: 'ok',
             botReady,
+            dbConfigured: !!db.supabase,
             timestamp: new Date().toISOString()
         }));
     } else if (pathname === '/api/status') {
         try {
             let stats = null;
-            if (botReady) {
+            if (botReady && db.supabase) {
                 stats = await db.buscarEstatisticas();
             }
 
@@ -124,7 +125,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log(`🌐 Servidor rodando na porta ${PORT}`);
     console.log(`📱 Acesse http://localhost:${PORT} para conectar o WhatsApp`);
 });

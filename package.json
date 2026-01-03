@@ -1,5 +1,5 @@
 {
-    "name": "nutri-whatsapp-bot",
+    "name": "whatsapp-bot",
     "version": "1.0.0",
     "description": "Bot de WhatsApp para nutricionista com IA por tokens usando Supabase",
     "main": "src/index.js",

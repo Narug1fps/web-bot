@@ -4,15 +4,16 @@ require('dotenv').config();
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
+let supabase = null;
+
 if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ Erro: SUPABASE_URL e SUPABASE_SERVICE_KEY são obrigatórios!');
-    console.error('📝 Crie um arquivo .env baseado no .env.example');
-    process.exit(1);
+    console.warn('⚠️  Aviso: SUPABASE_URL e SUPABASE_SERVICE_KEY não definidos. O banco de dados não funcionará.');
+} else {
+    supabase = createClient(supabaseUrl, supabaseKey);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 async function buscarTodasPerguntas() {
+    if (!supabase) return [];
     const { data, error } = await supabase
         .from('perguntas_respostas')
         .select('*')
@@ -26,6 +27,7 @@ async function buscarTodasPerguntas() {
 }
 
 async function buscarPerguntaPorId(id) {
+    if (!supabase) return null;
     const { data, error } = await supabase
         .from('perguntas_respostas')
         .select('*')
@@ -40,6 +42,7 @@ async function buscarPerguntaPorId(id) {
 }
 
 async function adicionarPergunta(pergunta, tokens, resposta, categoria = 'geral') {
+    if (!supabase) return null;
     const { data, error } = await supabase
         .from('perguntas_respostas')
         .insert({
@@ -59,6 +62,7 @@ async function adicionarPergunta(pergunta, tokens, resposta, categoria = 'geral'
 }
 
 async function atualizarPergunta(id, pergunta, tokens, resposta, categoria) {
+    if (!supabase) return null;
     const { data, error } = await supabase
         .from('perguntas_respostas')
         .update({
@@ -79,6 +83,7 @@ async function atualizarPergunta(id, pergunta, tokens, resposta, categoria) {
 }
 
 async function deletarPergunta(id) {
+    if (!supabase) return false;
     const { error } = await supabase
         .from('perguntas_respostas')
         .update({ ativo: false })
@@ -92,6 +97,7 @@ async function deletarPergunta(id) {
 }
 
 async function registrarHistorico(numeroTelefone, nomeContato, mensagemRecebida, respostaEnviada, confianca, perguntaId) {
+    if (!supabase) return null;
     const { data, error } = await supabase
         .from('historico')
         .insert({
@@ -113,6 +119,7 @@ async function registrarHistorico(numeroTelefone, nomeContato, mensagemRecebida,
 }
 
 async function buscarHistorico(limite = 100) {
+    if (!supabase) return [];
     const { data, error } = await supabase
         .from('historico')
         .select(`
@@ -133,6 +140,7 @@ async function buscarHistorico(limite = 100) {
 }
 
 async function buscarHistoricoPorNumero(numeroTelefone, limite = 50) {
+    if (!supabase) return [];
     const { data, error } = await supabase
         .from('historico')
         .select('*')
@@ -148,6 +156,7 @@ async function buscarHistoricoPorNumero(numeroTelefone, limite = 50) {
 }
 
 async function buscarConfig(chave) {
+    if (!supabase) return null;
     const { data, error } = await supabase
         .from('configuracoes')
         .select('valor')
@@ -162,6 +171,7 @@ async function buscarConfig(chave) {
 }
 
 async function atualizarConfig(chave, valor) {
+    if (!supabase) return false;
     const { error } = await supabase
         .from('configuracoes')
         .update({ valor })
@@ -175,6 +185,7 @@ async function atualizarConfig(chave, valor) {
 }
 
 async function buscarTodasConfigs() {
+    if (!supabase) return [];
     const { data, error } = await supabase
         .from('configuracoes')
         .select('*');
@@ -187,6 +198,7 @@ async function buscarTodasConfigs() {
 }
 
 async function verificarBloqueado(numeroTelefone) {
+    if (!supabase) return false;
     const { data, error } = await supabase
         .from('contatos_bloqueados')
         .select('id')
@@ -200,6 +212,7 @@ async function verificarBloqueado(numeroTelefone) {
 }
 
 async function bloquearContato(numeroTelefone, motivo = null) {
+    if (!supabase) return false;
     const { error } = await supabase
         .from('contatos_bloqueados')
         .insert({
@@ -215,6 +228,7 @@ async function bloquearContato(numeroTelefone, motivo = null) {
 }
 
 async function desbloquearContato(numeroTelefone) {
+    if (!supabase) return false;
     const { error } = await supabase
         .from('contatos_bloqueados')
         .delete()
@@ -228,6 +242,7 @@ async function desbloquearContato(numeroTelefone) {
 }
 
 async function buscarEstatisticas() {
+    if (!supabase) return { totalPerguntas: 0, totalMensagens: 0, mediaConfianca: '0.0' };
     const [perguntasResult, historicoResult, confiancaResult] = await Promise.all([
         supabase
             .from('perguntas_respostas')
