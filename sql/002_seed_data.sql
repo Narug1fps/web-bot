@@ -13,57 +13,57 @@ INSERT INTO perguntas_respostas (pergunta, tokens, resposta, categoria) VALUES
 -- Categoria: Institucional
 ('O que é a Viraweb?',
  ARRAY['viraweb', 'empresa', 'sobre', 'quem', 'servico'],
- '🚀 A Viraweb é uma empresa de tecnologia especializada em criação de sites, tráfego pago e soluções digitais.\n\n💻 Também somos criadores do **GDC – Gestor de Clientes**, um SaaS completo para gerenciar leads, clientes e vendas.\n\n🌐 Saiba mais em: https://viraweb.online',
+ '🚀 A Viraweb é uma empresa de tecnologia especializada em criação de sites, tráfego pago e soluções digitais.💻 Também somos criadores do **GDC – Gestor de Clientes**, um SaaS completo para gerenciar leads, clientes e vendas.🌐 Saiba mais em: https://viraweb.online',
  'institucional'),
 
 ('O que é o GDC Gestor de Clientes?',
- ARRAY['gdc', 'gestor', 'clientes', 'crm', 'sistema'],
- '📊 O **GDC – Gestor de Clientes** é um sistema SaaS da Viraweb para organizar, gerenciar seus clientes, agendamentos, profissionais, financeiro e muito mais.\n\n 🌐 Acesse: https://gdc.viraweb.online',
+ ARRAY['gdc', 'gestor', 'clientes', 'sistema'],
+ '📊 O **GDC – Gestor de Clientes** é um sistema SaaS da Viraweb para organizar, gerenciar seus clientes, agendamentos, profissionais, financeiro e muito mais. 🌐 Acesse: https://gdc.viraweb.online',
  'institucional'),
 
 -- Categoria: Criação de Sites
 ('Vocês criam sites?',
  ARRAY['site', 'criacao', 'criar', 'website', 'pagina'],
- '🌐 Sim! Criamos sites modernos, rápidos e focados em conversão.\n\n✔️ Tipos de sites:\n• Institucional\n• Landing pages\n• E-commerce\n• Sites personalizados\n\n⚡ Design responsivo, SEO otimizado e alta performance.\n\n📩 Solicite um orçamento!',
+ '🌐 Sim! Criamos sites modernos, rápidos e focados em conversão.✔️ Tipos de sites:\n• Institucional\n• Landing pages\n• E-commerce\n• Sites personalizados⚡ Design responsivo, SEO otimizado e alta performance.📩 Solicite um orçamento!',
  'sites'),
 
 ('Meu site aparece no Google?',
  ARRAY['google', 'seo', 'busca', 'aparecer', 'posicao'],
- '🔎 Sim! Todos os sites da Viraweb já são desenvolvidos com **SEO otimizado**.\n\n📈 Isso ajuda seu site a:\n• Aparecer no Google\n• Carregar mais rápido\n• Converter mais visitantes\n\n🚀 Mais visibilidade para seu negócio!',
+ '🔎 Sim! Todos os sites da Viraweb já são desenvolvidos com **SEO otimizado**.📈 Isso ajuda seu site a:\n• Aparecer no Google\n• Carregar mais rápido\n• Converter mais visitantes🚀 Mais visibilidade para seu negócio!',
  'sites'),
 
 -- Categoria: Tráfego Pago
 ('Vocês fazem tráfego pago?',
  ARRAY['trafego', 'ads', 'anuncio', 'google', 'facebook', 'instagram'],
- '📢 Sim! Gerenciamos campanhas de tráfego pago focadas em resultado.\n\n🎯 Plataformas:\n• Google Ads\n• Instagram Ads\n• Facebook Ads\n\n📊 Com otimização contínua e relatórios detalhados para maximizar seu ROI.',
+ '📢 Sim! Gerenciamos campanhas de tráfego pago focadas em resultado.🎯 Plataformas:\n• Google Ads\n• Instagram Ads\n• Facebook Ads📊 Com otimização contínua e relatórios detalhados para maximizar seu ROI.',
  'trafego_pago'),
 
 ('Quanto custa anunciar?',
  ARRAY['valor', 'preco', 'anuncio', 'investimento', 'ads'],
- '💰 O investimento em anúncios varia conforme seu objetivo.\n\n📌 Trabalhamos com:\n• Orçamento personalizado\n• Estratégia sob medida\n• Controle total de gastos\n\n📞 Fale conosco para uma análise gratuita!',
+ '💰 O investimento em anúncios varia conforme seu objetivo.📌 Trabalhamos com:\n• Orçamento personalizado\n• Estratégia sob medida\n• Controle total de gastos📞 Fale conosco para uma análise gratuita!',
  'trafego_pago'),
 
 -- Categoria: Design Profissional
 ('Vocês fazem identidade visual?',
  ARRAY['design', 'logo', 'identidade', 'branding', 'visual'],
- '🎨 Sim! Criamos identidade visual profissional para sua marca.\n\n✨ Serviços:\n• Logotipo\n• Paleta de cores\n• Material gráfico\n• Design para redes sociais\n\n🚀 Sua marca com visual forte e profissional!',
+ '🎨 Sim! Criamos identidade visual profissional para sua marca.✨ Serviços:\n• Logotipo\n• Paleta de cores\n• Material gráfico\n• Design para redes sociais🚀 Sua marca com visual forte e profissional!',
  'design'),
 
 -- Categoria: Google Meu Negócio
 ('Vocês cuidam do Google Meu Negócio?',
  ARRAY['google', 'meu', 'negocio', 'maps', 'local'],
- '📍 Sim! Fazemos a gestão completa do **Google Meu Negócio**.\n\n📈 Benefícios:\n• Mais visibilidade local\n• Mais chamadas e mensagens\n• Melhor posição no Google Maps\n\n⭐ Inclui otimização, posts e gestão de avaliações.',
+ '📍 Sim! Fazemos a gestão completa do **Google Meu Negócio**.📈 Benefícios:\n• Mais visibilidade local\n• Mais chamadas e mensagens\n• Melhor posição no Google Maps⭐ Inclui otimização, posts e gestão de avaliações.',
  'google_meu_negocio'),
 
 -- Categoria: Contato / Orçamento
 ('Como solicitar um orçamento?',
  ARRAY['orcamento', 'contato', 'preco', 'contratar'],
- '📝 Para solicitar um orçamento:\n\n1️⃣ Acesse: https://viraweb.online\n2️⃣ Envie sua necessidade por aqui\n3️⃣ Nosso time entrará em contato\n\n🚀 Vamos crescer seu negócio juntos!',
+ '📝 Para solicitar um orçamento:1️⃣ Acesse: https://viraweb.online\n2️⃣ Envie sua necessidade por aqui\n3️⃣ Nosso time entrará em contato🚀 Vamos crescer seu negócio juntos!',
  'contato'),
 
 ('Vocês atendem online?',
  ARRAY['online', 'remoto', 'distancia', 'internet'],
- '💻 Sim! Atendemos clientes de todo o Brasil de forma 100% online.\n\n📞 Reuniões por videochamada\n📊 Suporte digital\n📈 Projetos escaláveis\n\n🌍 Onde você estiver, a Viraweb atende!',
+ '💻 Sim! Atendemos clientes de todo o Brasil de forma 100% online.📞 Reuniões por videochamada\n📊 Suporte digital\n📈 Projetos escaláveis🌍 Onde você estiver, a Viraweb atende!',
  'contato')
 
 ON CONFLICT DO NOTHING;

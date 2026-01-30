@@ -48,6 +48,13 @@ function setState(newState) {
             startCountdown();
             break;
 
+        case 'authenticating':
+            elements.stateLoading.classList.remove('hidden');
+            elements.statusBadge.classList.add('loading');
+            elements.statusBadge.querySelector('.status-text').textContent = 'Conectando...';
+            stopCountdown();
+            break;
+
         case 'connected':
             elements.stateConnected.classList.remove('hidden');
             elements.statusBadge.classList.add('online');
@@ -110,6 +117,9 @@ async function checkStatus() {
         if (data.botReady) {
             setState('connected');
             updateStats(data.stats);
+        } else if (data.isAuthenticated) {
+            // Bot foi autenticado mas ainda está carregando
+            setState('authenticating');
         } else if (data.qrCode) {
             elements.qrImage.src = data.qrCode;
             if (state.currentState !== 'qr') {
